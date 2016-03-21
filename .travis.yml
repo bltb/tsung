@@ -9,3 +9,5 @@ otp_release:
    - R15B03
    - R14B04
 script: ./configure && make test
+notifications:
+   - email: benjamin.lee@realthought.net
