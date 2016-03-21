@@ -127,7 +127,7 @@ decode(Data) ->
 %%% Internal functions
 %%%===================================================================
 gen_accept_key() ->
-    random:seed(erlang:now()),
+    random:seed(?NOW),
     Key = crypto:rand_bytes(16),
     KeyStr = base64:encode_to_string(Key),
     Accept = binary:list_to_bin(KeyStr ++ "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"),

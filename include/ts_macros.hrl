@@ -22,7 +22,7 @@
 -vc('$Id: ts_macros.hrl,v 0.0 2012/08/22 09:07:50 nniclaus Exp $ ').
 -author('nniclaus@sophia.inria.fr').
 
--define(NOW, now()).
+-define(NOW, erlang:timestamp()).
 
 -define(CRLF, "\r\n").
 -define(CR,13).

@@ -88,6 +88,7 @@ file_to_list_test()->
 split_test()->
     ?assertEqual([<<"username3" >>, <<"glop4">>, <<>>], ts_utils:split(<< "username3;glop4;">>, <<";">>)).
 
+%% XXX. Is this test correct? Is this supposed to test ts_utils::split2()?
 split2_test()->
     ?assertEqual([<< >>], ts_utils:split(<< "">>, <<";">>)).
 

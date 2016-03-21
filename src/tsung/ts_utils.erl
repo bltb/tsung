@@ -193,14 +193,14 @@ is_controller() ->
 %% Func: init_seed/0
 %%----------------------------------------------------------------------
 init_seed()->
-    init_seed(now()).
+    init_seed(?NOW).
 
 %%----------------------------------------------------------------------
 %% Func: now_sec/0
 %% Purpose: returns unix like elapsed time in sec
 %%----------------------------------------------------------------------
 now_sec() ->
-    time2sec(now()).
+    time2sec(?NOW).
 
 time2sec({MSec, Seconds, _}) ->
     Seconds+1000000*MSec.

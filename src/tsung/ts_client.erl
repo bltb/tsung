@@ -92,7 +92,7 @@ init(#session{ id           = SessionId,
     ?DebugF("Init ... started with count = ~p~n",[Count]),
     case Seed of
         now ->
-            {A, B, C} = now(),
+            {A, B, C} = ?NOW,
             ts_utils:init_seed({A * Id, B, C});
         SeedVal when is_integer(SeedVal) ->
             %% use a different but fixed seed for each client.

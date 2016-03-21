@@ -29,6 +29,8 @@
 -define(UUID_OID_NAMESPACE, <<107,167,184,18,157,173,17,209,128,180,0,192,79,212,48,200>>).
 -define(UUID_X500_NAMESPACE, <<107,167,184,20,157,173,17,209,128,180,0,192,79,212,48,200>>).
 
+-include("ts_macros.hrl").
+
 -record(state, {node, clock_seq}).
 
 %% @type uuid() = binary(). A binary representation of a UUID
@@ -62,10 +64,10 @@ random() ->
 
 %% @spec srandom() -> uuid()
 %% @doc
-%% Seeds random number generation with erlang:now() and generates a random UUID
+%% Seeds random number generation with ?NOW and generates a random UUID
 %%
 srandom() ->
-    {A1,A2,A3} = erlang:now(),
+    {A1,A2,A3} = ?NOW,
     random:seed(A1, A2, A3),
     random().
 
@@ -116,7 +118,7 @@ timestamp() ->
 %% Generates a UUID based on timestamp
 %%
 timestamp(Node, CS) ->
-    {MegaSecs, Secs, MicroSecs} = erlang:now(),
+    {MegaSecs, Secs, MicroSecs} = ?NOW,
     T = (((((MegaSecs * 1000000) + Secs) * 1000000) + MicroSecs) * 10) + 16#01b21dd213814000,
     format_uuid(T band 16#ffffffff, (T bsr 32) band 16#ffff, (T bsr 48) band 16#ffff, (CS bsr 8) band 16#ff, CS band 16#ff, Node, 1).
 
@@ -149,7 +151,7 @@ stop() ->
     gen_server:cast(?SERVER, stop).
 
 init(Options) ->
-    {A1,A2,A3} = proplists:get_value(seed, Options, erlang:now()),
+    {A1,A2,A3} = proplists:get_value(seed, Options, ?NOW),
     random:seed(A1, A2, A3),
     State = #state{
         node = proplists:get_value(node, Options, <<0:48>>),
