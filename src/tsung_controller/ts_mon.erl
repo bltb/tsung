@@ -114,7 +114,7 @@ add(Data) ->
 add_match(Data,{UserId,SessionId,RequestId,Tr,Name}) ->
     add_match(Data,{UserId,SessionId,RequestId,[],Tr,Name});
 add_match(Data=[Head|_],{UserId,SessionId,RequestId,Bin,Tr,Name}) ->
-    TimeStamp=?NOW,
+    TimeStamp=?TIMESTAMP,
     put(last_match,Head),
     ts_mon_cache:add_match(Data,{UserId,SessionId,RequestId,TimeStamp, Bin,Tr,Name}).
 
@@ -137,19 +137,19 @@ sendmes({none, _, _})       -> skip;
 sendmes({protocol, _, _})   -> skip;
 sendmes({protocol_local, _, _})   -> skip;
 sendmes({_Type, Who, What}) ->
-    gen_server:cast({global, ?MODULE}, {sendmsg, Who, ?NOW, What}).
+    gen_server:cast({global, ?MODULE}, {sendmsg, Who, ?TIMESTAMP, What}).
 
 rcvmes({none, _, _})    -> skip;
 rcvmes({protocol, _, _})-> skip;
 rcvmes({protocol_local, _, _})-> skip;
 rcvmes({_, _, closed})  -> skip;
 rcvmes({_Type, Who, What})  ->
-    gen_server:cast({global, ?MODULE}, {rcvmsg, Who, ?NOW, What}).
+    gen_server:cast({global, ?MODULE}, {rcvmsg, Who, ?TIMESTAMP, What}).
 
 dump({none, _, _})-> skip;
 dump({cached, << >> })-> skip;
 dump({_Type, Who, What})  ->
-    gen_server:cast({global, ?MODULE}, {dump, Who, ?NOW, What});
+    gen_server:cast({global, ?MODULE}, {dump, Who, ?TIMESTAMP, What});
 dump({cached, Data})->
     gen_server:cast({global, ?MODULE}, {dump, cached, Data}).
 
@@ -393,7 +393,7 @@ close_stats(State) ->
         json ->
             io:format(State#state.log,"]}]}~n",[]);
         _ ->
-            io:format(State#state.log,"EndMonitor:~w~n",[?NOW])
+            io:format(State#state.log,"EndMonitor:~w~n",[?TIMESTAMP])
         end,
     case State#state.log of
         standard_io -> ok;
