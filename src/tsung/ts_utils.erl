@@ -1034,7 +1034,8 @@ spread_list2(PackedList, OldRes) ->
     {Res, Tail} = lists:foldl(Fun, {[],[]}, PackedList),
     spread_list2(lists:reverse(Tail), OldRes ++ lists:reverse(Res)).
 
-%pack duplicates into sublists
+%% pack duplicates into sublists
+%% http://lambdafoo.com/blog/2008/02/26/99-erlang-problems-1-15/
 pack([]) ->
     [];
 pack([H|[]]) ->
