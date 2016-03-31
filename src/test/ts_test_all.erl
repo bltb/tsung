@@ -28,7 +28,7 @@ run() ->
         _ ->
             %% older version of cover removes the export_all option
             RetVal = case eunit:test([ts_test_all],
-                                     [{report,{eunit_surefire,[{dir,"."}]}}]) of
+                                     [verbose, {report,{eunit_surefire,[{dir,"."}]}}]) of
                          error  -> 1;
                          _ -> 0
                      end,
@@ -49,7 +49,7 @@ run_cover() ->
                            end ,  ModulesAll),
     filelib:ensure_dir("cover_report/index.html"),
 
-    RetVal = case eunit:test([ts_test_all], [{report,{eunit_surefire,[{dir,"."}]}}]) of
+    RetVal = case eunit:test([ts_test_all], [verbose, {report,{eunit_surefire,[{dir,"."}]}}]) of
                  error  -> 1;
                  Result -> 0
              end,
