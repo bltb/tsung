@@ -24,7 +24,7 @@
 %%%  Public License) is based on, is included in this exception.
 
 
--module (ts_server_websocket).
+-module (ts_server_websocket_ssl).
 
 -export([ connect/4, send/3, close/1, set_opts/2, protocol_options/1,
           normalize_incomming_data/2 ]).
@@ -59,7 +59,7 @@ connect(Host, Port, Opts, Timeout) ->
     Frame = WSConfig#ws_config.frame,
     Protocol = WSConfig#ws_config.subprotos,
 
-    case gen_tcp:connect(Host, Port, opts_to_tcp_opts(TcpOpts),Timeout) of
+    case ssl:connect(Host, Port, opts_to_tcp_opts(TcpOpts),Timeout) of
         {ok, Socket} ->
             Pid = spawn_link(
                     fun() ->
@@ -67,8 +67,8 @@ connect(Host, Port, Opts, Timeout) ->
                                         opts = TcpOpts, path = Path, version = Version,
                                         frame = Frame, socket = Socket})
                     end),
-            gen_tcp:controlling_process(Socket, Pid),
-            inet:setopts(Socket, [{active, once}]),
+            ssl:controlling_process(Socket, Pid),
+            ssl:setopts(Socket, [{active, once}]),
             {ok, Pid};
         Ret ->
             Ret
@@ -78,7 +78,7 @@ loop(#state{socket = Socket, host = Host, path = Path,
             version = Version, subprotos = SubProtocol,
             state = not_connected} = State)->
     {Handshake, Accept} = websocket:get_handshake(Host, Path, SubProtocol, Version),
-    gen_tcp:send(Socket, Handshake),
+    ssl:send(Socket, Handshake),
     loop(State#state{socket = Socket, accept = Accept,
                      state = waiting_handshake});
 
@@ -90,7 +90,7 @@ loop(#state{parent = Parent, socket = Socket, accept = Accept,
             case CheckResult of
                 ok ->
                     ?Debug("handshake success: ~n"),
-                    inet:setopts(Socket, [{active, once}]),
+                    ssl:setopts(Socket, [{active, once}]),
                     loop(State#state{state = connected});
                 {error, Reason} ->
                     ?DebugF("handshake fail: ~p~n", [Reason]),
@@ -112,15 +112,15 @@ loop(#state{parent = Parent, socket = Socket, state = connected,
                 "text" -> websocket:encode_text(Data);
                 _ -> websocket:encode_binary(Data)
             end,
-            gen_tcp:send(Socket, EncodedData),
+            ssl:send(Socket, EncodedData),
             Parent ! {ok, Ref},
             loop(State);
         close ->
             EncodedData = websocket:encode_close(<<"close">>),
-            gen_tcp:send(Socket, EncodedData),
-            gen_tcp:close(Socket);
+            ssl:send(Socket, EncodedData),
+            ssl:close(Socket);
         {set_opts, Opts} ->
-            inet:setopts(Socket, Opts),
+            ssl:setopts(Socket, Opts),
             loop(State);
         {tcp, Socket, Data}->
             case websocket:decode(<<Buffer/binary, Data/binary>>) of

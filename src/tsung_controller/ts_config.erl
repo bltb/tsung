@@ -904,6 +904,12 @@ parse(Element = #xmlElement{name=option, attributes=Attrs},
                     NewProto =  OldProto#proto_opts{websocket_frame=Frame},
                     lists:foldl( fun parse/2, Conf#config{proto_opts=NewProto},
                                  Element#xmlElement.content);
+                "websocket_subprotocols" ->
+                    SubProtocols = getAttr(string,Attrs, value, ?config(websocket_subprotocols)),
+                    OldProto =  Conf#config.proto_opts,
+                    NewProto =  OldProto#proto_opts{websocket_subprotocols=SubProtocols},
+                    lists:foldl( fun parse/2, Conf#config{proto_opts=NewProto},
+                                 Element#xmlElement.content);
                 "bosh_path" ->
                     Path = getAttr(string,Attrs, value, ?config(bosh_path)),
                     OldProto =  Conf#config.proto_opts,
@@ -1232,6 +1238,9 @@ set_net_type("udp6")  -> ts_udp6;
 set_net_type("ssl")   -> ts_ssl;
 set_net_type("ssl6")  -> ts_ssl6;
 set_net_type("websocket")  -> ts_server_websocket;
+set_net_type("websocket_ssl")  -> ts_server_websocket_ssl;
+set_net_type("ws")  -> ts_server_websocket;
+set_net_type("wss")  -> ts_server_websocket_ssl;
 set_net_type("bosh")  -> ts_bosh;
 set_net_type("bosh_ssl") -> ts_bosh_ssl;
 set_net_type("erlang") -> ts_erlang.
