@@ -1,5 +1,7 @@
 language: erlang
 otp_release:
+   - 20.0
+   - 19.3
    - 19.2
    - 18.3
    - 18.2
@@ -8,8 +10,6 @@ otp_release:
    - 17.5
    - 17.1
    - R16B03-1
-   - R15B03
-   - R14B04
 before_script:
    - kerl list installations
 script: ./configure && make test
